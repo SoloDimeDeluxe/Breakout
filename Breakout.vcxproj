@@ -92,29 +92,35 @@ xcopy /y /e /i /d "$(ProjectDir)res" "$(OutDir)res"</Command>
     <ClCompile Include="src\entities\ball.cpp" />
     <ClCompile Include="src\entities\brick.cpp" />
     <ClCompile Include="src\entities\paddle.cpp" />
+    <ClCompile Include="src\entities\powerup.cpp" />
     <ClCompile Include="src\game\game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes\credits.cpp" />
     <ClCompile Include="src\scenes\gameplay.cpp" />
+    <ClCompile Include="src\scenes\instructions.cpp" />
     <ClCompile Include="src\scenes\menu.cpp" />
     <ClCompile Include="src\utils\collisions.cpp" />
     <ClCompile Include="src\utils\color.cpp" />
     <ClCompile Include="src\utils\input.cpp" />
+    <ClCompile Include="src\utils\textures.cpp" />
     <ClCompile Include="src\utils\ui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\entities\ball.h" />
     <ClInclude Include="src\entities\brick.h" />
     <ClInclude Include="src\entities\paddle.h" />
+    <ClInclude Include="src\entities\powerup.h" />
     <ClInclude Include="src\game\config.h" />
     <ClInclude Include="src\game\game.h" />
     <ClInclude Include="src\game\scene.h" />
     <ClInclude Include="src\scenes\credits.h" />
     <ClInclude Include="src\scenes\gameplay.h" />
+    <ClInclude Include="src\scenes\instructions.h" />
     <ClInclude Include="src\scenes\menu.h" />
     <ClInclude Include="src\utils\collisions.h" />
     <ClInclude Include="src\utils\color.h" />
     <ClInclude Include="src\utils\input.h" />
+    <ClInclude Include="src\utils\textures.h" />
     <ClInclude Include="src\utils\ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

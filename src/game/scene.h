@@ -6,6 +6,7 @@ namespace game
 	{
 		Menu,
 		Gameplay,
+		Instructions,
 		Credits,
 		Exit
 	};

@@ -11,6 +11,7 @@ namespace ball
 		double radius;
 		double speedX;
 		double speedY;
+		double speedScale;
 		bool isLaunched;
 	};
 
@@ -20,11 +21,15 @@ namespace ball
 
 	void launch(Ball& ball);
 
+	void setSpeedScale(Ball& ball, double scale);
+
 	void update(Ball& ball, double deltaTime);
 
 	bool isOut(const Ball& ball);
 
 	void bounce(Ball& ball, double normalX, double normalY, double penetration);
+
+	void bounceOffPaddle(Ball& ball, const paddle::Paddle& paddle);
 
 	void draw(const Ball& ball);
 }

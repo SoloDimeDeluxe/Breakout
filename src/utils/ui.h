@@ -28,4 +28,6 @@ namespace ui
 	int updateButtons(const Button buttons[], int count, int& selected);
 
 	void drawOverlay();
+
+	void drawMenuHint(double y);
 }

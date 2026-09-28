@@ -5,6 +5,7 @@
 #include "game/config.h"
 #include "utils/color.h"
 #include "utils/input.h"
+#include "utils/textures.h"
 
 namespace paddle
 {
@@ -15,7 +16,7 @@ namespace paddle
 		const double POSITION_Y = 50.0;
 		const double SPEED = 650.0;
 
-		const Color COLOR = { 0.3, 0.8, 1.0, 1.0 };
+		const Color COLOR = { 0.92, 0.92, 0.95, 1.0 };
 	}
 
 	Paddle create()
@@ -28,6 +29,11 @@ namespace paddle
 		paddle.speed = SPEED;
 
 		return paddle;
+	}
+
+	void setWidthScale(Paddle& paddle, double scale)
+	{
+		paddle.width = WIDTH * scale;
 	}
 
 	void update(Paddle& paddle, double deltaTime)
@@ -56,6 +62,6 @@ namespace paddle
 	void draw(const Paddle& paddle)
 	{
 		colors::use(COLOR);
-		slRectangleFill(paddle.x, paddle.y, paddle.width, paddle.height);
+		slSprite(textures::getPaddle(), paddle.x, paddle.y, paddle.width, paddle.height);
 	}
 }

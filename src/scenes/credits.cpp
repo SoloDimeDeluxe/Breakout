@@ -51,5 +51,7 @@ namespace credits
 		ui::drawTextCentered("DejaVu Sans", CENTER_X, 240.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
 
 		ui::drawButton(BACK_BUTTON, true);
+
+		ui::drawTextCentered("ESC o ENTER para volver al menu", CENTER_X, 50.0, ui::TEXT_FONT_SIZE - 4.0, colors::GRAY);
 	}
 }

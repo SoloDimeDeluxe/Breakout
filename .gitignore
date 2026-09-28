@@ -6,3 +6,6 @@
 # Build output (generated when compiling)
 bin/
 obj/
+
+# Claude app previews (not part of the game)
+Claude outputs/

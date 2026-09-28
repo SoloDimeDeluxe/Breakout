@@ -6,6 +6,7 @@
 
 #include "game/config.h"
 #include "utils/color.h"
+#include "utils/textures.h"
 
 namespace ball
 {
@@ -13,10 +14,12 @@ namespace ball
 	{
 		const double RADIUS = 9.0;
 		const double SPEED = 430.0;
-		const int CIRCLE_VERTICES = 24;
 
 		const double LAUNCH_DIRECTION_X = 0.5;
 		const double LAUNCH_DIRECTION_Y = 0.866;
+
+		const double PI = 3.14159265358979;
+		const double MAX_BOUNCE_ANGLE = 60.0 * PI / 180.0;
 	}
 
 	Ball create()
@@ -27,6 +30,7 @@ namespace ball
 		ball.radius = RADIUS;
 		ball.speedX = 0.0;
 		ball.speedY = 0.0;
+		ball.speedScale = 1.0;
 		ball.isLaunched = false;
 
 		return ball;
@@ -43,9 +47,23 @@ namespace ball
 
 	void launch(Ball& ball)
 	{
-		ball.speedX = LAUNCH_DIRECTION_X * SPEED;
-		ball.speedY = LAUNCH_DIRECTION_Y * SPEED;
+		ball.speedX = LAUNCH_DIRECTION_X * SPEED * ball.speedScale;
+		ball.speedY = LAUNCH_DIRECTION_Y * SPEED * ball.speedScale;
 		ball.isLaunched = true;
+	}
+
+	void setSpeedScale(Ball& ball, double scale)
+	{
+		double currentSpeed = std::sqrt(ball.speedX * ball.speedX + ball.speedY * ball.speedY);
+
+		if (currentSpeed > 0.0)
+		{
+			double newSpeed = SPEED * scale;
+			ball.speedX = ball.speedX / currentSpeed * newSpeed;
+			ball.speedY = ball.speedY / currentSpeed * newSpeed;
+		}
+
+		ball.speedScale = scale;
 	}
 
 	void update(Ball& ball, double deltaTime)
@@ -100,9 +118,31 @@ namespace ball
 		}
 	}
 
+	void bounceOffPaddle(Ball& ball, const paddle::Paddle& paddle)
+	{
+		double halfWidth = paddle.width / 2.0;
+		double hitOffset = (ball.x - paddle.x) / halfWidth;
+
+		if (hitOffset < -1.0)
+		{
+			hitOffset = -1.0;
+		}
+		if (hitOffset > 1.0)
+		{
+			hitOffset = 1.0;
+		}
+
+		double angle = hitOffset * MAX_BOUNCE_ANGLE;
+
+		ball.speedX = SPEED * ball.speedScale * std::sin(angle);
+		ball.speedY = SPEED * ball.speedScale * std::cos(angle);
+
+		ball.y = paddle.y + paddle.height / 2.0 + ball.radius;
+	}
+
 	void draw(const Ball& ball)
 	{
 		colors::use(colors::WHITE);
-		slCircleFill(ball.x, ball.y, ball.radius, CIRCLE_VERTICES);
+		slSprite(textures::getBall(), ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
 	}
 }

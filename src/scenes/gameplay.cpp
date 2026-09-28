@@ -8,6 +8,7 @@
 #include "entities/paddle.h"
 #include "entities/ball.h"
 #include "entities/brick.h"
+#include "entities/powerup.h"
 #include "utils/collisions.h"
 #include "utils/input.h"
 #include "utils/ui.h"
@@ -26,6 +27,12 @@ namespace gameplay
 
 		const int START_LIVES = 3;
 		const int POINTS_PER_BRICK = 10;
+		const double END_DELAY = 1.5;
+		const int MAX_LIVES = 5;
+		const double EFFECT_DURATION = 10.0;
+		const double WIDE_PADDLE_SCALE = 1.5;
+		const double SLOW_BALL_SCALE = 0.65;
+		const Color LOST_COLOR = { 0.95, 0.3, 0.3, 1.0 };
 
 		const double CENTER_X = config::SCREEN_WIDTH / 2.0;
 		const double CENTER_Y = config::SCREEN_HEIGHT / 2.0;
@@ -51,11 +58,94 @@ namespace gameplay
 		paddle::Paddle player;
 		ball::Ball gameBall;
 		brick::Brick bricks[brick::COUNT];
+		powerup::PowerUp powerUps[powerup::MAX_COUNT];
 
 		State state = State::Playing;
 		int lives = START_LIVES;
 		int score = 0;
 		int selectedOption = 0;
+		double endTimer = 0.0;
+		double widePaddleTimer = 0.0;
+		double slowBallTimer = 0.0;
+
+		void resetEffects()
+		{
+			widePaddleTimer = 0.0;
+			slowBallTimer = 0.0;
+			paddle::setWidthScale(player, 1.0);
+			ball::setSpeedScale(gameBall, 1.0);
+		}
+
+		void applyPowerUp(powerup::Type type)
+		{
+			switch (type)
+			{
+			case powerup::Type::WidePaddle:
+				widePaddleTimer = EFFECT_DURATION;
+				paddle::setWidthScale(player, WIDE_PADDLE_SCALE);
+				break;
+			case powerup::Type::SlowBall:
+				slowBallTimer = EFFECT_DURATION;
+				ball::setSpeedScale(gameBall, SLOW_BALL_SCALE);
+				break;
+			case powerup::Type::ExtraLife:
+				if (lives < MAX_LIVES)
+				{
+					lives++;
+				}
+				break;
+			case powerup::Type::Count:
+				break;
+			}
+		}
+
+		void updateEffects(double deltaTime)
+		{
+			if (widePaddleTimer > 0.0)
+			{
+				widePaddleTimer -= deltaTime;
+
+				if (widePaddleTimer <= 0.0)
+				{
+					widePaddleTimer = 0.0;
+					paddle::setWidthScale(player, 1.0);
+				}
+			}
+
+			if (slowBallTimer > 0.0)
+			{
+				slowBallTimer -= deltaTime;
+
+				if (slowBallTimer <= 0.0)
+				{
+					slowBallTimer = 0.0;
+					ball::setSpeedScale(gameBall, 1.0);
+				}
+			}
+		}
+
+		void checkPowerUpCatch()
+		{
+			for (int i = 0; i < powerup::MAX_COUNT; i++)
+			{
+				powerup::PowerUp& current = powerUps[i];
+
+				if (current.isActive &&
+					collisions::rectRect(current.x, current.y, current.width, current.height,
+						player.x, player.y, player.width, player.height))
+				{
+					applyPowerUp(current.type);
+					current.isActive = false;
+				}
+			}
+		}
+
+		void finishMatch(State result)
+		{
+			state = result;
+			selectedOption = END_OPTION_RETRY;
+			endTimer = END_DELAY;
+		}
 
 		void checkPaddleCollision()
 		{
@@ -68,7 +158,16 @@ namespace gameplay
 				gameBall.x, gameBall.y, gameBall.radius,
 				player.x, player.y, player.width, player.height);
 
-			if (result.hasCollided)
+			if (!result.hasCollided)
+			{
+				return;
+			}
+
+			if (gameBall.y >= player.y)
+			{
+				ball::bounceOffPaddle(gameBall, player);
+			}
+			else
 			{
 				ball::bounce(gameBall, result.normalX, result.normalY, result.penetration);
 			}
@@ -92,6 +191,7 @@ namespace gameplay
 					ball::bounce(gameBall, result.normalX, result.normalY, result.penetration);
 					bricks[i].isActive = false;
 					score += POINTS_PER_BRICK;
+					powerup::trySpawn(powerUps, bricks[i].x, bricks[i].y);
 					return;
 				}
 			}
@@ -107,6 +207,9 @@ namespace gameplay
 			}
 
 			paddle::update(player, deltaTime);
+			powerup::updateAll(powerUps, deltaTime);
+			checkPowerUpCatch();
+			updateEffects(deltaTime);
 
 			if (!gameBall.isLaunched)
 			{
@@ -125,8 +228,7 @@ namespace gameplay
 
 			if (brick::countActive(bricks) == 0)
 			{
-				state = State::Won;
-				selectedOption = END_OPTION_RETRY;
+				finishMatch(State::Won);
 				return;
 			}
 
@@ -136,11 +238,12 @@ namespace gameplay
 
 				if (lives <= 0)
 				{
-					state = State::Lost;
-					selectedOption = END_OPTION_RETRY;
+					finishMatch(State::Lost);
 				}
 				else
 				{
+					resetEffects();
+					powerup::clearAll(powerUps);
 					ball::placeOnPaddle(gameBall, player);
 				}
 			}
@@ -168,8 +271,14 @@ namespace gameplay
 			return game::Scene::Gameplay;
 		}
 
-		game::Scene updateEnd()
+		game::Scene updateEnd(double deltaTime)
 		{
+			if (endTimer > 0.0)
+			{
+				endTimer -= deltaTime;
+				return game::Scene::Gameplay;
+			}
+
 			int chosen = ui::updateButtons(END_BUTTONS, END_OPTION_COUNT, selectedOption);
 
 			if (chosen == END_OPTION_RETRY)
@@ -188,6 +297,10 @@ namespace gameplay
 		{
 			double textY = config::SCREEN_HEIGHT - config::HUD_HEIGHT / 2.0 - 8.0;
 
+			colors::use(colors::SHADOW);
+			slRectangleFill(CENTER_X, config::SCREEN_HEIGHT - config::HUD_HEIGHT / 2.0,
+				config::SCREEN_WIDTH, config::HUD_HEIGHT);
+
 			std::string livesText = "Vidas: " + std::to_string(lives);
 			std::string scoreText = "Puntos: " + std::to_string(score);
 
@@ -198,17 +311,43 @@ namespace gameplay
 			colors::use(colors::GRAY);
 			double lineY = config::SCREEN_HEIGHT - config::HUD_HEIGHT;
 			slLine(0.0, lineY, config::SCREEN_WIDTH, lineY);
+
+			double effectY = lineY - 25.0;
+
+			if (widePaddleTimer > 0.0)
+			{
+				std::string wideText = "Paleta ancha: " + std::to_string(static_cast<int>(widePaddleTimer) + 1) + "s";
+				ui::drawText(wideText.c_str(), 20.0, effectY, ui::TEXT_FONT_SIZE - 6.0, colors::WHITE);
+			}
+
+			if (slowBallTimer > 0.0)
+			{
+				std::string slowText = "Pelota lenta: " + std::to_string(static_cast<int>(slowBallTimer) + 1) + "s";
+				ui::drawTextRight(slowText.c_str(), config::SCREEN_WIDTH - 20.0, effectY, ui::TEXT_FONT_SIZE - 6.0, colors::WHITE);
+			}
 		}
 
 		void drawPanel(const char* title, const Color& titleColor, const ui::Button buttons[], int count)
 		{
 			ui::drawOverlay();
-			ui::drawTextCentered(title, CENTER_X, CENTER_Y + 90.0, ui::TITLE_FONT_SIZE - 8.0, titleColor);
+			ui::drawTextCentered(title, CENTER_X, CENTER_Y + 130.0, ui::TITLE_FONT_SIZE - 8.0, titleColor);
 
 			for (int i = 0; i < count; i++)
 			{
 				ui::drawButton(buttons[i], i == selectedOption);
 			}
+
+			ui::drawMenuHint(CENTER_Y - 170.0);
+		}
+
+		void drawEndPanel(const char* title, const Color& titleColor, const char* reason)
+		{
+			drawPanel(title, titleColor, END_BUTTONS, END_OPTION_COUNT);
+
+			std::string scoreText = "Puntaje final: " + std::to_string(score);
+
+			ui::drawTextCentered(reason, CENTER_X, CENTER_Y + 80.0, ui::TEXT_FONT_SIZE, colors::WHITE);
+			ui::drawTextCentered(scoreText.c_str(), CENTER_X, CENTER_Y + 45.0, ui::TEXT_FONT_SIZE, colors::YELLOW);
 		}
 	}
 
@@ -218,11 +357,15 @@ namespace gameplay
 		gameBall = ball::create();
 		ball::placeOnPaddle(gameBall, player);
 		brick::initGrid(bricks);
+		powerup::clearAll(powerUps);
 
 		state = State::Playing;
 		lives = START_LIVES;
 		score = 0;
 		selectedOption = 0;
+		endTimer = 0.0;
+		widePaddleTimer = 0.0;
+		slowBallTimer = 0.0;
 	}
 
 	game::Scene update(double deltaTime)
@@ -236,7 +379,7 @@ namespace gameplay
 			return updatePaused();
 		case State::Won:
 		case State::Lost:
-			return updateEnd();
+			return updateEnd(deltaTime);
 		}
 
 		return game::Scene::Gameplay;
@@ -245,26 +388,37 @@ namespace gameplay
 	void draw()
 	{
 		brick::drawAll(bricks);
+		powerup::drawAll(powerUps);
 		paddle::draw(player);
 		ball::draw(gameBall);
 		drawHud();
 
 		if (state == State::Playing && !gameBall.isLaunched)
 		{
+			ui::drawTextCentered("Rompe todos los ladrillos para ganar", CENTER_X, 190.0, ui::TEXT_FONT_SIZE, colors::YELLOW);
 			ui::drawTextCentered("ESPACIO para lanzar la pelota", CENTER_X, 150.0, ui::TEXT_FONT_SIZE, colors::WHITE);
 			ui::drawTextCentered("Flechas / A D para mover", CENTER_X, 115.0, ui::TEXT_FONT_SIZE - 4.0, colors::GRAY);
 		}
+
+		bool isEndPanelVisible = endTimer <= 0.0;
 
 		switch (state)
 		{
 		case State::Paused:
 			drawPanel("PAUSA", colors::WHITE, PAUSE_BUTTONS, PAUSE_OPTION_COUNT);
+			ui::drawTextCentered("P / ESC para continuar", CENTER_X, CENTER_Y + 70.0, ui::TEXT_FONT_SIZE, colors::GRAY);
 			break;
 		case State::Won:
-			drawPanel("GANASTE!", colors::YELLOW, END_BUTTONS, END_OPTION_COUNT);
+			if (isEndPanelVisible)
+			{
+				drawEndPanel("GANASTE!", colors::YELLOW, "Rompiste todos los ladrillos");
+			}
 			break;
 		case State::Lost:
-			drawPanel("PERDISTE", { 0.95, 0.3, 0.3, 1.0 }, END_BUTTONS, END_OPTION_COUNT);
+			if (isEndPanelVisible)
+			{
+				drawEndPanel("PERDISTE", LOST_COLOR, "Te quedaste sin vidas");
+			}
 			break;
 		case State::Playing:
 			break;

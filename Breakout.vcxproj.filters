@@ -27,6 +27,9 @@
     <ClCompile Include="src\entities\paddle.cpp">
       <Filter>src\entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\powerup.cpp">
+      <Filter>src\entities</Filter>
+    </ClCompile>
     <ClCompile Include="src\game\game.cpp">
       <Filter>src\game</Filter>
     </ClCompile>
@@ -37,6 +40,9 @@
       <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="src\scenes\gameplay.cpp">
+      <Filter>src\scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scenes\instructions.cpp">
       <Filter>src\scenes</Filter>
     </ClCompile>
     <ClCompile Include="src\scenes\menu.cpp">
@@ -51,6 +57,9 @@
     <ClCompile Include="src\utils\input.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\utils\textures.cpp">
+      <Filter>src\utils</Filter>
+    </ClCompile>
     <ClCompile Include="src\utils\ui.cpp">
       <Filter>src\utils</Filter>
     </ClCompile>
@@ -63,6 +72,9 @@
       <Filter>src\entities</Filter>
     </ClInclude>
     <ClInclude Include="src\entities\paddle.h">
+      <Filter>src\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entities\powerup.h">
       <Filter>src\entities</Filter>
     </ClInclude>
     <ClInclude Include="src\game\config.h">
@@ -80,6 +92,9 @@
     <ClInclude Include="src\scenes\gameplay.h">
       <Filter>src\scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\scenes\instructions.h">
+      <Filter>src\scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\scenes\menu.h">
       <Filter>src\scenes</Filter>
     </ClInclude>
@@ -90,6 +105,9 @@
       <Filter>src\utils</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\input.h">
+      <Filter>src\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\textures.h">
       <Filter>src\utils</Filter>
     </ClInclude>
     <ClInclude Include="src\utils\ui.h">

@@ -15,5 +15,7 @@ namespace paddle
 
 	void update(Paddle& paddle, double deltaTime);
 
+	void setWidthScale(Paddle& paddle, double scale);
+
 	void draw(const Paddle& paddle);
 }

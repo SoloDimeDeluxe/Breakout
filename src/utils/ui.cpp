@@ -97,6 +97,12 @@ namespace ui
 		return -1;
 	}
 
+	void drawMenuHint(double y)
+	{
+		drawTextCentered("Flechas / W S para elegir - ENTER o click para aceptar",
+			config::SCREEN_WIDTH / 2.0, y, TEXT_FONT_SIZE - 4.0, colors::GRAY);
+	}
+
 	void drawOverlay()
 	{
 		colors::use(colors::SHADOW);

@@ -10,6 +10,7 @@ namespace menu
 		enum Option
 		{
 			OPTION_PLAY,
+			OPTION_INSTRUCTIONS,
 			OPTION_CREDITS,
 			OPTION_EXIT,
 			OPTION_COUNT
@@ -21,9 +22,10 @@ namespace menu
 
 		const ui::Button BUTTONS[OPTION_COUNT] =
 		{
-			{ CENTER_X, 400.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Jugar" },
-			{ CENTER_X, 320.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Creditos" },
-			{ CENTER_X, 240.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Salir" }
+			{ CENTER_X, 420.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Jugar" },
+			{ CENTER_X, 340.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Como jugar" },
+			{ CENTER_X, 260.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Creditos" },
+			{ CENTER_X, 180.0, BUTTON_WIDTH, BUTTON_HEIGHT, "Salir" }
 		};
 
 		int selectedOption = OPTION_PLAY;
@@ -42,6 +44,8 @@ namespace menu
 		{
 		case OPTION_PLAY:
 			return game::Scene::Gameplay;
+		case OPTION_INSTRUCTIONS:
+			return game::Scene::Instructions;
 		case OPTION_CREDITS:
 			return game::Scene::Credits;
 		case OPTION_EXIT:
@@ -60,7 +64,6 @@ namespace menu
 			ui::drawButton(BUTTONS[i], i == selectedOption);
 		}
 
-		ui::drawTextCentered("Flechas / W S para elegir - ENTER o click para aceptar",
-			CENTER_X, 60.0, ui::TEXT_FONT_SIZE - 4.0, colors::GRAY);
+		ui::drawMenuHint(60.0);
 	}
 }

@@ -3,6 +3,7 @@
 #include "sl.h"
 
 #include "game/config.h"
+#include "utils/textures.h"
 
 namespace brick
 {
@@ -69,7 +70,7 @@ namespace brick
 			if (bricks[i].isActive)
 			{
 				colors::use(bricks[i].color);
-				slRectangleFill(bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height);
+				slSprite(textures::getBrick(), bricks[i].x, bricks[i].y, bricks[i].width, bricks[i].height);
 			}
 		}
 	}

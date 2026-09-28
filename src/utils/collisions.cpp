@@ -20,6 +20,13 @@ namespace collisions
 		}
 	}
 
+	bool rectRect(double x1, double y1, double width1, double height1,
+		double x2, double y2, double width2, double height2)
+	{
+		return std::fabs(x1 - x2) < (width1 + width2) / 2.0 &&
+			std::fabs(y1 - y2) < (height1 + height2) / 2.0;
+	}
+
 	Result circleRect(double circleX, double circleY, double radius,
 		double rectX, double rectY, double rectWidth, double rectHeight)
 	{
