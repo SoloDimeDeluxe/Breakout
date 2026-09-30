@@ -39,16 +39,19 @@ namespace credits
 
 	void draw()
 	{
-		ui::drawTextCentered("CREDITOS", CENTER_X, 620.0, ui::TITLE_FONT_SIZE - 16.0, colors::YELLOW);
+		ui::drawTextCentered("CREDITOS", CENTER_X, 680.0, ui::TITLE_FONT_SIZE - 16.0, colors::YELLOW);
 
-		ui::drawTextCentered("Programacion y diseno", CENTER_X, 520.0, ui::TEXT_FONT_SIZE, colors::GRAY);
-		ui::drawTextCentered("Valentin Reyes", CENTER_X, 480.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
+		ui::drawTextCentered("Programacion y diseno", CENTER_X, 610.0, ui::TEXT_FONT_SIZE, colors::GRAY);
+		ui::drawTextCentered("Valentin Reyes", CENTER_X, 575.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
 
-		ui::drawTextCentered("Libreria grafica", CENTER_X, 400.0, ui::TEXT_FONT_SIZE, colors::GRAY);
-		ui::drawTextCentered("SIGIL - Geoff Nagy", CENTER_X, 360.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
+		ui::drawTextCentered("Libreria grafica", CENTER_X, 515.0, ui::TEXT_FONT_SIZE, colors::GRAY);
+		ui::drawTextCentered("SIGIL - Geoff Nagy", CENTER_X, 480.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
 
-		ui::drawTextCentered("Fuente", CENTER_X, 280.0, ui::TEXT_FONT_SIZE, colors::GRAY);
-		ui::drawTextCentered("DejaVu Sans", CENTER_X, 240.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
+		ui::drawTextCentered("Fuente", CENTER_X, 420.0, ui::TEXT_FONT_SIZE, colors::GRAY);
+		ui::drawTextCentered("DejaVu Sans - dejavu-fonts.github.io", CENTER_X, 385.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
+
+		ui::drawTextCentered("Texturas", CENTER_X, 325.0, ui::TEXT_FONT_SIZE, colors::GRAY);
+		ui::drawTextCentered("Generadas con IA (Claude - Anthropic)", CENTER_X, 290.0, ui::BUTTON_FONT_SIZE, colors::WHITE);
 
 		ui::drawButton(BACK_BUTTON, true);
 

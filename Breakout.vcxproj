@@ -50,15 +50,14 @@
       <AdditionalIncludeDirectories>$(ProjectDir)src;$(ProjectDir)lib\sigil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Windows</SubSystem>
-      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)lib\sigil\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sigil.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y "$(ProjectDir)lib\sigil\lib\*.dll" "$(OutDir)"
-</Command>
+      <Command>xcopy /y /d "$(ProjectDir)lib\sigil\lib\*.dll" "$(OutDir)"
+xcopy /y /e /i /d "$(ProjectDir)res" "$(OutDir)res"</Command>
       <Message>Copying Sigil dlls and res folder next to the executable</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -83,7 +82,7 @@
       <AdditionalDependencies>sigil.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if exist "$(ProjectDir)lib\sigil\bin\*.dll" xcopy /y /d "$(ProjectDir)lib\sigil\bin\*.dll" "$(OutDir)"
+      <Command>xcopy /y /d "$(ProjectDir)lib\sigil\lib\*.dll" "$(OutDir)"
 xcopy /y /e /i /d "$(ProjectDir)res" "$(OutDir)res"</Command>
       <Message>Copying Sigil dlls and res folder next to the executable</Message>
     </PostBuildEvent>
