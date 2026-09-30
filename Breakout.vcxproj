@@ -57,8 +57,8 @@
       <AdditionalDependencies>sigil.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if exist "$(ProjectDir)lib\sigil\bin\*.dll" xcopy /y /d "$(ProjectDir)lib\sigil\bin\*.dll" "$(OutDir)"
-xcopy /y /e /i /d "$(ProjectDir)res" "$(OutDir)res"</Command>
+      <Command>copy /Y "$(ProjectDir)lib\sigil\lib\*.dll" "$(OutDir)"
+</Command>
       <Message>Copying Sigil dlls and res folder next to the executable</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
